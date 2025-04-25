@@ -17,7 +17,7 @@ public class Vacina implements Serializable {
 	private String nome;
 	private String descricao;
 	@Enumerated(EnumType.STRING)
-	private Status status = Status.ATIVO;
+	private Status status;
 
 	public Long getCodigo() {
 		return codigo;

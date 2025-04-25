@@ -21,21 +21,26 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead>
                         <tr>
-                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Código</th>
-                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Nome</th>
+                            <div th:replace="~{layout/fragments/paginacao :: coluna(${pagina}, 'codigo', 'Código', 'w-1/2')}"></div>
+                            <div th:replace="~{layout/fragments/paginacao :: coluna(${pagina}, 'nome', 'Nome', 'w-1/2')}"></div>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Descrição</th>
                             <th scope="col"  colspan="2" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase">Ação</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="vacina : ${vacinas}" class="odd:bg-white even:bg-gray-100 hover:bg-gray-200">
+                        <tr th:if="${pagina.vazia}">
+                            <td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 text-center" th:text="Nenhuma vacina cadastrada"></td>
+                        </tr>
+                        <tr th:each="vacina : ${pagina.conteudo}" class="odd:bg-white even:bg-gray-100 hover:bg-gray-200">
                             <td th:text="${vacina.codigo}" class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">John Brown</td>
                             <td th:text="${vacina.nome}" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">45</td>
                             <td th:text="${vacina.descricao}" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">New York No. 1 Lake Park</td>
                             <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
                                 <a th:href="@{/vacinas/alterar/{codigo}(codigo=${vacina.codigo})}">Alterar</a>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">Remover</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
+                                <a th:href="@{/vacinas/remover/{codigo}(codigo=${vacina.codigo})}">Remover</a>
+                            </td>
                         </tr>
                         </tbody>
                     </table>
@@ -43,6 +48,8 @@
             </div>
         </div>
     </div>
+
+    <div th:replace="~{layout/fragments/paginacao :: paginacao(${pagina})}"></div>
 
     <div th:each="vacina : ${vacinas}" class=" md:hidden flex flex-col mt-5">
         <div class="overflow-x-auto">

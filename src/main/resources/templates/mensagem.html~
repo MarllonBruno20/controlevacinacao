@@ -8,7 +8,7 @@
 
 <body>
 <!-- conteudo principal -->
-<main layout:fragment="conteudo" th:fragment="texto" id="main" class="flex flex-col w-full">
+<main layout:fragment="conteudo" th:fragment="texto" id="main" class="flex flex-col align-middle w-full m-10">
 
     <h2 th:text="${mensagem}" class="text-xl font-semibold text-gray-400 md:text-3xl">Cadastrar</h2>
 

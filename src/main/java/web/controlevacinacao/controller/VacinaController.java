@@ -1,7 +1,16 @@
 package web.controlevacinacao.controller;
 
+import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxLocation;
+import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,7 +18,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import web.controlevacinacao.filter.VacinaFilter;
+import web.controlevacinacao.model.Status;
 import web.controlevacinacao.model.Vacina;
+import web.controlevacinacao.pagination.PageWrapper;
 import web.controlevacinacao.repository.VacinaRepository;
 import web.controlevacinacao.service.VacinaService;
 
@@ -30,27 +41,56 @@ public class VacinaController {
 
     @GetMapping("/vacinas")
     public String mostraVacinas(Model model) {
-        List<Vacina> vacinas = vacinaRepository.findAll();
+        List<Vacina> vacinas = vacinaRepository.findByStatus(Status.ATIVO);
 
         model.addAttribute("vacinas", vacinas);
 
         return "vacinas/listar";
     }
 
-    @GetMapping("/vacinas/pesquisar")
+    @GetMapping("/vacinas/abrirpesquisar")
     public String abrirPesquisar() {
         return "vacinas/pesquisar";
     }
 
-    @PostMapping("/vacinas/pesquisar")
-    public String pesquisar(VacinaFilter vacina, Model model) {
+    @GetMapping("/vacinas/pesquisar")
+    public String pesquisar(VacinaFilter vacina, Model model,
+                            @PageableDefault(size = 7)
+                            @SortDefault(sort = "codigo", direction = Sort.Direction.ASC) Pageable pageable,
+                            HttpServletRequest request) {
 
-       List<Vacina> vacinas = vacinaRepository.pesquisar(vacina);
-       logger.trace("Vacinas encontradas: {}", vacinas);
+       Page<Vacina> pagina = vacinaRepository.pesquisar(vacina, pageable);
 
-        model.addAttribute("vacinas", vacinas);
+       logger.trace("Vacinas encontradas: {}", pagina.getContent());
+
+        PageWrapper<Vacina> paginaWrapper = new PageWrapper<>(pagina, request);
+        model.addAttribute("pagina", paginaWrapper);
 
         return "vacinas/listar";
+    }
+
+    @HxRequest
+    @GetMapping("/vacinas/cadastrar")
+    public String abrirCadastroVacinaHTMX(Vacina vacina) {
+        return "vacinas/cadastrar :: formulario";
+    }
+
+    @HxRequest
+    @HxLocation(path = "/mensagem", target = "#main", swap = "outerHTML")
+    @PostMapping("/vacinas/cadastrar")
+    public String cadastrarHTMX(Vacina vacina, RedirectAttributes redirectAttributes) {
+        vacinaService.salvar(vacina);
+        redirectAttributes.addAttribute("mensagem", "Vacina cadastrada com sucesso");
+        return "redirect:/mensagem";
+    }
+
+    @HxRequest
+    @GetMapping("/mensagem")
+    public String mostrarMensagemHTMX(String mensagem, Model model) {
+        if (mensagem != null && !mensagem.isEmpty()) {
+            model.addAttribute("mensagem", mensagem);
+        }
+        return "mensagem :: texto";
     }
 
     @GetMapping("/vacinas/cadastrar")
@@ -89,6 +129,16 @@ public class VacinaController {
     public String alterar(Vacina vacina, RedirectAttributes atributos) {
         vacinaService.alterar(vacina);
         atributos.addAttribute("mensagem", "Vacina alterada com sucesso!");
+        return "redirect:/mensagem";
+    }
+
+    @GetMapping("/vacinas/remover/{codigo}")
+    public String remover(@PathVariable("codigo") Long codigo, RedirectAttributes atributos) {
+
+        vacinaService.desativar(codigo);
+
+        atributos.addAttribute("mensagem", "Vacina removida com sucesso!");
+
         return "redirect:/mensagem";
     }
 }

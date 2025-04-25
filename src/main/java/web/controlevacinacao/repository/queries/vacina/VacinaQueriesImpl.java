@@ -29,6 +29,14 @@ public class VacinaQueriesImpl implements VacinaQueries {
 
 		criarCondicoes(filtro, condicoes);
 
+		if(condicoes.toString().isEmpty()) {
+			condicoes.append(" where ");
+		} else {
+			condicoes.append(" and ");
+		}
+
+		condicoes.append(" v.status = ATIVO");
+
 		queryVacinas.append(condicoes);
 		TypedQuery<Vacina> typedQuery = em.createQuery(queryVacinas.toString(), Vacina.class);
 		typedQuery.setHint("hibernate.query.passDistinctThrough", false);
@@ -46,6 +54,14 @@ public class VacinaQueriesImpl implements VacinaQueries {
 		StringBuilder condicoes = new StringBuilder();
 
 		criarCondicoes(filtro, condicoes);
+
+		if(condicoes.toString().isEmpty()) {
+			condicoes.append(" where ");
+		} else {
+			condicoes.append(" and ");
+		}
+
+		condicoes.append(" v.status = ATIVO");
 
 		queryVacinas.append(condicoes);
 		PaginacaoUtil.prepararOrdemJPQL(queryVacinas, pageable);

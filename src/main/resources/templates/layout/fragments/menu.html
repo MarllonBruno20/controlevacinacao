@@ -32,9 +32,9 @@
         <!-- 1a Opcao -->
         <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Cadastrar', @{/vacinas/cadastrar}, ~{::#cadastrar-icon})}"></div>
         <!-- 2a Opcao -->
-        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Pesquisar', @{/vacinas/pesquisar}, ~{::#pesquisar-icon})}"></div>
+        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Pesquisar', @{/vacinas/abrirpesquisar}, ~{::#pesquisar-icon})}"></div>
         <!-- a Opcao -->
-        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Todas', @{/vacinas}, ~{::#pesquisar-icon})}"></div>
+        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Todas', @{/vacinas/pesquisar}, ~{::#pesquisar-icon})}"></div>
       </div>
     </div>
 

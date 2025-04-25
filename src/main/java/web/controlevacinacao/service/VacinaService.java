@@ -2,6 +2,7 @@ package web.controlevacinacao.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import web.controlevacinacao.model.Status;
 import web.controlevacinacao.model.Vacina;
 import web.controlevacinacao.repository.VacinaRepository;
 
@@ -20,6 +21,16 @@ public class VacinaService {
     }
 
     public  void alterar (Vacina vacina) {
+        vacinaRepository.save(vacina);
+    }
+
+    public void remover(Long codigo) {
+        vacinaRepository.deleteById(codigo);
+    }
+
+    public void desativar(Long codigo) {
+        Vacina vacina = vacinaRepository.findById(codigo).get();
+        vacina.setStatus(Status.INATIVO);
         vacinaRepository.save(vacina);
     }
 

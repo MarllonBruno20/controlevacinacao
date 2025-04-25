@@ -102,7 +102,21 @@
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 
-		
+		<!-- Adiciona a dependência do Flyway -->
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-database-postgresql</artifactId>
+		</dependency>
+
+			<dependency>
+				<groupId>io.github.wimdeblauwe</groupId>
+				<artifactId>htmx-spring-boot</artifactId>
+				<version>4.0.1</version>
+			</dependency>
 
 	</dependencies>
 
