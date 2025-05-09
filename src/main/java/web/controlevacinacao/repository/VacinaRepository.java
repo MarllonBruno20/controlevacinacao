@@ -9,4 +9,6 @@ import java.util.List;
 
 public interface VacinaRepository extends JpaRepository<Vacina, Long>, VacinaQueries {
     List<Vacina> findByStatus(Status status);
+
+    Vacina findByCodigoAndStatus(Long codigo, Status status);
 }

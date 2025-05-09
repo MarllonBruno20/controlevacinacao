@@ -36,10 +36,10 @@
                             <td th:text="${vacina.nome}" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">45</td>
                             <td th:text="${vacina.descricao}" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">New York No. 1 Lake Park</td>
                             <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                                <a th:hx-get="@{/vacinas/alterar/{codigo}(codigo=${vacina.codigo})}" hx-target="#main" hxswap="outerHTML" class="cursor-pointer" >Alterar</a>
+                                <a th:hx-get="@{/vacinas/alterar/{codigo}(codigo=${vacina.codigo})}">Alterar</a>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                                <a th:hx-get="@{/vacinas/remover/{codigo}(codigo=${vacina.codigo})}" hx-target="#main" hxswap="outerHTML" class="cursor-pointer">Remover</a>
+                                <a th:hx-get="@{/vacinas/remover/{codigo}(codigo=${vacina.codigo})}">Remover</a>
                             </td>
                         </tr>
                         </tbody>

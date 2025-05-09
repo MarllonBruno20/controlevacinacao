@@ -48,6 +48,12 @@ public class VacinaController {
         return "vacinas/listar";
     }
 
+    @HxRequest
+    @GetMapping("/vacinas/abrirpesquisar")
+    public String abrirPaginaPesquisaHTMX() {
+        return "vacinas/pesquisar :: formulario";
+    }
+
     @GetMapping("/vacinas/abrirpesquisar")
     public String abrirPesquisar() {
         return "vacinas/pesquisar";
@@ -67,6 +73,19 @@ public class VacinaController {
         model.addAttribute("pagina", paginaWrapper);
 
         return "vacinas/listar";
+    }
+
+    @HxRequest
+    @GetMapping("/vacinas/pesquisar")
+    public String pesquisarHTMX(VacinaFilter filtro, Model model,
+                                @PageableDefault(size = 7) @SortDefault(sort = "codigo", direction = Sort.Direction.ASC)
+                                Pageable pageable,
+                                HttpServletRequest request) {
+        Page<Vacina> pagina = vacinaRepository.pesquisar(filtro, pageable);
+        logger.info("Vacinas pesquisadas: {}", pagina);
+        PageWrapper<Vacina> paginaWrapper = new PageWrapper<>(pagina, request);
+        model.addAttribute("pagina", paginaWrapper);
+        return "vacinas/listar :: tabela";
     }
 
     @HxRequest
@@ -125,10 +144,32 @@ public class VacinaController {
         }
     }
 
+    @HxRequest
+    @GetMapping("/vacinas/alterar/{codigo}")
+    public String abrirAlterarHTMX(@PathVariable("codigo") Long codigo, Model model) {
+        Vacina vacina = vacinaRepository.findByCodigoAndStatus(codigo, Status.ATIVO);
+        if (vacina != null) {
+            model.addAttribute("vacina", vacina);
+            return "vacinas/alterar :: formulario";
+        } else {
+            model.addAttribute("mensagem", "Não existe uma vacina com esse código");
+            return "mensagem :: texto";
+        }
+    }
+
     @PostMapping("/vacinas/alterar")
     public String alterar(Vacina vacina, RedirectAttributes atributos) {
         vacinaService.alterar(vacina);
         atributos.addAttribute("mensagem", "Vacina alterada com sucesso!");
+        return "redirect:/mensagem";
+    }
+
+    @HxRequest
+    @HxLocation(path = "/mensagem", target = "#main", swap = "outerHTML")
+    @PostMapping("/vacinas/alterar")
+    public String alterarHTMX(Vacina vacina, RedirectAttributes redirectAttributes) {
+        vacinaService.alterar(vacina);
+        redirectAttributes.addAttribute("mensagem", "Vacina alterada com sucesso");
         return "redirect:/mensagem";
     }
 
@@ -139,6 +180,15 @@ public class VacinaController {
 
         atributos.addAttribute("mensagem", "Vacina removida com sucesso!");
 
+        return "redirect:/mensagem";
+    }
+
+    @HxRequest
+    @HxLocation(path = "/mensagem", target = "#main", swap = "outerHTML")
+    @GetMapping("/vacinas/remover/{codigo}")
+    public String removerHTMX(@PathVariable("codigo") Long codigo, RedirectAttributes attributes) {
+        vacinaService.remover(codigo);
+        attributes.addAttribute("mensagem", "Remoção efetuada com sucesso");
         return "redirect:/mensagem";
     }
 }
